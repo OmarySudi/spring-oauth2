@@ -1,0 +1,40 @@
+
+INSERT INTO oauth_client_details
+(client_id, client_secret, web_server_redirect_uri,
+ scope, access_token_validity, refresh_token_validity,
+ resource_ids, authorized_grant_types, additional_information)
+ VALUES ('carpool', '{bcrypt}$2y$12$TeFEj1pVZPjsdxcgDeHifu6sxTwmTxKM/1sEMb6qJcwZgpaaayPhm',
+ null, 'ROLE_admin,ROLE_operator', '3600', '10000', 'driver,customer,oauth',
+ 'authorization_code,password,refresh_token,implicit', '{}');
+
+ INSERT INTO permission (NAME) VALUES
+  ('create_profile'),
+  ('read_profile'),
+  ('update_profile'),
+  ('delete_profile');
+
+ INSERT INTO role (NAME) VALUES
+  ('ROLE_admin'),('ROLE_operator');
+
+ INSERT INTO permission_role (PERMISSION_ID, ROLE_ID) VALUES
+      (1,1), /*create-> admin */
+      (2,1), /* read admin */
+      (3,1), /* update admin */
+      (4,1), /* delete admin */
+      (2,2),  /* read operator */
+      (3,2);  /* update operator */
+
+ insert into user (
+ id, username, password, userID, email, full_name, phone_number,enabled,account_activation, accountNonExpired, credentialsNonExpired, accountNonLocked)
+ VALUES ('1', 'sudi','{bcrypt}$2y$12$pKfdVzIIbilUcQ6l1fSjxOMdWvGfxFlUdL5P.OKlOGdDk2Ra.n3FK',
+        '54sudi','kekovasudi@gmail.com', 'Sudi Omary','07454545454','1', '1','1', '1', '1');
+
+  insert into user (
+   id, username, password, userID, email, full_name, phone_number,enabled,account_activation, accountNonExpired, credentialsNonExpired, accountNonLocked)
+   VALUES ('2', 'omary','{bcrypt}$2y$12$GXZB2NkTGs4VB4F5VOrHiuGpTKLIRIh/u.i2eeLSy1GYIbZeoIoze',
+          '54omary','firesoud159@gmail.com', 'Omary Kekova','07454545454','1', '1','1', '1', '1');
+
+  INSERT INTO role_user (ROLE_ID, USER_ID)
+      VALUES
+      (1, 1) /* sudi-admin */,
+      (2, 2) /* omary-operatorr */ ;
