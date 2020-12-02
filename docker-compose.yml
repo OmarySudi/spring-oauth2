@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  mysql-auth-server:
+    image: mysql:5.7
+    container_name: oauth-server-sql
+    environment:
+      - MYSQL_ROOT_PASSWORD=sudi
+      - MYSQL_DATABASE=OAuthDB
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=sudi
+
+  spring-auth-server:
+    image: auth-server
+    container_name: oauth-server-app
+    ports:
+      - 8083:8080
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    depends_on:
+      - mysql-auth-server
