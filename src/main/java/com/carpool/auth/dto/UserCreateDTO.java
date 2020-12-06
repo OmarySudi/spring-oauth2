@@ -7,6 +7,7 @@ public class UserCreateDTO {
     private String email;
     private String phoneNumber;
     private String password;
+    private String password_confirm;
     private String userID;
 
     private String[] roles;
@@ -49,6 +50,14 @@ public class UserCreateDTO {
 
     public void setUserID(String userID) {
         this.userID = userID;
+    }
+
+    public String getPassword_confirm() {
+        return password_confirm;
+    }
+
+    public void setPassword_confirm(String password_confirm) {
+        this.password_confirm = password_confirm;
     }
 
     public String getPhoneNumber() {

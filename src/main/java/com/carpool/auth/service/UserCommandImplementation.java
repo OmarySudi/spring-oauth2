@@ -1,9 +1,10 @@
 package com.carpool.auth.service;
 
 import com.carpool.auth.dto.UserCreateDTO;
+import com.carpool.auth.exeption.EntityExistException;
 import com.carpool.auth.exeption.EntityNotFoundException;
 import com.carpool.auth.exeption.InternalServerErrorException;
-import com.carpool.auth.model.Permission;
+import com.carpool.auth.model.Mail;
 import com.carpool.auth.model.Role;
 import com.carpool.auth.model.User;
 import com.carpool.auth.repository.UserDetailsRepository;
@@ -15,7 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,6 +29,9 @@ public class UserCommandImplementation implements UserCommandService{
     UserCommandService userCommandService;
 
     @Autowired
+    EmailService emailService;
+
+    @Autowired
     PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -38,27 +41,48 @@ public class UserCommandImplementation implements UserCommandService{
     UserPermissionRepository userPermissionRepository;
 
     @Override
-    public User createUser(UserCreateDTO userCreateDTO) {
+    public User createUser(UserCreateDTO userCreateDTO){
+        Optional<User> optionalUser = userDetailsRepository.findByUsername(userCreateDTO.getUsername());
 
-        try{
-            User newUser = new User();
+        if(!optionalUser.isPresent())
+        {
+            if(userCreateDTO.getPassword().equals(userCreateDTO.getPassword_confirm()))
+            {
+                try{
 
-            newUser.setUsername(userCreateDTO.getUsername());
-            newUser.setFullName(userCreateDTO.getFullName());
-            //newUser.setEmail(userCreateDTO.getEmail());
-            newUser.setPhoneNumber(userCreateDTO.getPhoneNumber());
-            newUser.setPassword(passwordEncoder.encode(userCreateDTO.getPassword()));
+                    User newUser = new User();
 
-            newUser.setRoles(this.setRolesList(userCreateDTO.getRoles()));
+                    newUser.setUsername(userCreateDTO.getUsername());
+                    newUser.setFullName(userCreateDTO.getFullName());
+                    //newUser.setEmail(userCreateDTO.getEmail());
+                    newUser.setPhoneNumber(userCreateDTO.getPhoneNumber());
+                    newUser.setPassword(passwordEncoder.encode(userCreateDTO.getPassword()));
 
-            newUser.setUserID(Utilities.generateRandomString());
+                    newUser.setRoles(this.setRolesList(userCreateDTO.getRoles()));
 
-            return userDetailsRepository.save(newUser);
+                    newUser.setUserID(Utilities.generateRandomString());
 
-        } catch(Exception ex){
+                    Mail mail = new Mail();
+                    mail.setMailTo("firesoud159@gmail.com");
+                    mail.setSubject("Account Confirmation");
+                    mail.setFrom("kekovasudi@gmail.com");
+                    mail.setText("This email is for verification of email");
 
-            throw new InternalServerErrorException("Can not register user, there is internal server error");
-        }
+                    //emailService.sendComplexEmail(mail);
+                    emailService.sendSimpleEmail(mail);
+
+                    return userDetailsRepository.save(newUser);
+
+                } catch(Exception ex){
+
+                    throw new InternalServerErrorException("Can not register user, there is internal server error");
+                }
+            }
+            else
+                throw new InternalServerErrorException("Passwords does not match");
+
+        }else
+            throw new InternalServerErrorException("Email is already used, use other email");
     }
 
     @Override

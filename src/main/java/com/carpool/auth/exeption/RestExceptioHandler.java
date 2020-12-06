@@ -21,4 +21,12 @@ public class RestExceptioHandler {
 
         return new ResponseEntity<>(error,HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler(EntityExistException.class)
+    public ResponseEntity<ErrorMessage> handleEntityExistException(EntityExistException ex){
+
+        ErrorMessage error = new ErrorMessage(HttpStatus.INTERNAL_SERVER_ERROR,"Entity Exists",ex.getMessage());
+
+        return new ResponseEntity<>(error,HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }
