@@ -27,4 +27,5 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
         resources.resourceId("oauth");
     }
 
+
 }

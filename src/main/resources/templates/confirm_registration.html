@@ -25,11 +25,13 @@
 
         .body{
             height:200px;
-            background-color:gray;
+            background-color:white;
+            color:black;
         }
 
         .footer {
           background-color:purple;
+          color:white;
           height:100px;
         }
     </style>
@@ -63,7 +65,7 @@
             <h3>Email Confirmation from Akson</h3>
         </div>
         <div class="body">
-            Click this link to confirm your account
+            Click <a th:href="@{${link}}">here</a> To confirm your registration
         </div>
         <div class="footer">
             Regards, <br>

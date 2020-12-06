@@ -62,7 +62,10 @@ public class EmailServiceImplementation implements EmailService{
 //            emailSender.send(message);
             Context context = new Context();
 
-            String html = templateEngine.process("registration",context);
+            //if(mail.getProps().size() > 0)
+            context.setVariables(mail.getProps());
+
+            String html = templateEngine.process("confirm_registration",context);
 
             helper.setTo(mail.getMailTo());
             helper.setText(html, true);

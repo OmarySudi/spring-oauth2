@@ -15,9 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class UserCommandImplementation implements UserCommandService{
@@ -66,10 +64,14 @@ public class UserCommandImplementation implements UserCommandService{
                     mail.setMailTo("firesoud159@gmail.com");
                     mail.setSubject("Account Confirmation");
                     mail.setFrom("kekovasudi@gmail.com");
-                    mail.setText("This email is for verification of email");
+                    //mail.setText("This email is for verification of email");
 
-                    //emailService.sendComplexEmail(mail);
-                    emailService.sendSimpleEmail(mail);
+                    Map<String,Object> model = new HashMap<String,Object>();
+                    model.put("link","http://localhost:9090/api/v1/users/registration_redirect?userID="+newUser.getUserID());
+                    mail.setProps(model);
+
+                    emailService.sendComplexEmail(mail);
+                    //emailService.sendSimpleEmail(mail);
 
                     return userDetailsRepository.save(newUser);
 
