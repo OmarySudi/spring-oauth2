@@ -61,7 +61,7 @@ public class UserCommandImplementation implements UserCommandService{
                     newUser.setUserID(Utilities.generateRandomString());
 
                     Mail mail = new Mail();
-                    mail.setMailTo("firesoud159@gmail.com");
+                    mail.setMailTo(userCreateDTO.getUsername());
                     mail.setSubject("Account Confirmation");
                     mail.setFrom("kekovasudi@gmail.com");
                     //mail.setText("This email is for verification of email");
