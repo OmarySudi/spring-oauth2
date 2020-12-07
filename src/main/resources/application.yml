@@ -50,4 +50,10 @@ security:
       filter-order: 3
       #token-info-url: http://localhost:9090/oauth/check_token
 
+amazonProperties:
+  endpointUrl: http://oxobucket.s3-us-west-1.amazonaws.com
+  accessKey: AKIAWIVXFQZTHJXOOH6S
+  secretKey: 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
+  bucketName: oxobucket
+
 check-user-scopes: true

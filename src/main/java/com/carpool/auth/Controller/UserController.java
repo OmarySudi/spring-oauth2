@@ -4,6 +4,7 @@ import com.carpool.auth.dto.UserCreateDTO;
 import com.carpool.auth.exeption.InternalServerErrorException;
 import com.carpool.auth.model.User;
 import com.carpool.auth.repository.UserDetailsRepository;
+import com.carpool.auth.service.AmazonClient;
 import com.carpool.auth.service.UserCommandService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,8 +14,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,13 +26,16 @@ import java.util.Optional;
 public class UserController {
 
     @Autowired
-    UserDetailsService userDetailsService;
+    private UserDetailsService userDetailsService;
 
     @Autowired
-    UserCommandService userCommandService;
+    private UserCommandService userCommandService;
 
     @Autowired
-    UserDetailsRepository userDetailsRepository;
+    private UserDetailsRepository userDetailsRepository;
+
+    @Autowired
+    private AmazonClient amazonClient;
 
     //@PreAuthorize("permitAll()")
     @PostMapping(value = "/register")
@@ -86,5 +92,37 @@ public class UserController {
     @PostMapping(value="/set-user-roles")
     public ResponseEntity<User> setUserRoles(@RequestBody UserCreateDTO userCreateDTO){
         return new ResponseEntity<>(userCommandService.setRoles(userCreateDTO),HttpStatus.OK);
+    }
+
+    @PostMapping(value="/upload-picture")
+    public ResponseEntity<User> uploadPicture(
+            @RequestPart(value="profile_picture")MultipartFile profile_picture,
+            @RequestParam(value="userID") String userID){
+
+        return new ResponseEntity<>(amazonClient.uploadFile(profile_picture,userID),HttpStatus.OK);
+
+    }
+
+    @PostMapping(value = "/upload-files")
+    public ResponseEntity<User> driverUploadFiles(
+            @RequestPart(value="profile_picture")MultipartFile profile_picture,
+            @RequestPart(value="identity_card") MultipartFile identity_card,
+            @RequestPart(value="driving_licence") MultipartFile driving_licence,
+            @RequestPart(value="certificate_of_good_conduct") MultipartFile certificate_of_good_conduct,
+            @RequestParam(value="carID") String carID,
+            @RequestParam(value="userID") String userID){
+
+        List<MultipartFile> files = new ArrayList<MultipartFile>();
+
+        if(!profile_picture.isEmpty())
+        {
+            files.add(profile_picture);
+        }
+
+        files.add(identity_card);
+        files.add(driving_licence);
+        files.add(certificate_of_good_conduct);
+
+        return new ResponseEntity<>(amazonClient.uploadFiles(files,userID,carID),HttpStatus.OK);
     }
 }
