@@ -138,4 +138,23 @@ public class UserCommandImplementation implements UserCommandService{
 
         return optionalUser.get();
     }
+
+    @Override
+    public String deleteUser(String userID) {
+        Optional<User> optionalUser = userDetailsRepository.findByUserID(userID);
+
+        if(optionalUser.isPresent()){
+            User user = optionalUser.get();
+            try{
+                userDetailsRepository.delete(user);
+
+                return "User has successfully been deleted";
+
+            }catch(Exception ex){
+                throw new InternalServerErrorException("There is a server problem when deleting user, try again later");
+            }
+
+        }else
+            throw new EntityNotFoundException("There is no user of "+userID+" found in the database");
+    }
 }

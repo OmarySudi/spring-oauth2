@@ -17,4 +17,6 @@ public interface UserCommandService {
     List<User> getAllUsers();
 
     User getUser(String userID);
+
+    String deleteUser(String userID);
 }

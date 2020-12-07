@@ -103,6 +103,13 @@ public class UserController {
 
     }
 
+    @DeleteMapping(value="/delete/{userID}")
+    public ResponseEntity<String> deleteUser(@PathVariable(value="userID") String userID){
+
+        return new ResponseEntity<>(userCommandService.deleteUser(userID),HttpStatus.OK);
+
+    }
+
     @PostMapping(value = "/upload-files")
     public ResponseEntity<User> driverUploadFiles(
             @RequestPart(value="profile_picture")MultipartFile profile_picture,
