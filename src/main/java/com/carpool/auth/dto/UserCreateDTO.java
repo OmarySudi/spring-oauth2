@@ -1,13 +1,27 @@
 package com.carpool.auth.dto;
 
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
+
 public class UserCreateDTO {
 
+    @NotNull
+    @Email
     private String username;
+
     private String fullName;
     private String email;
+
+    @NotNull
     private String phoneNumber;
+
+    @NotNull
     private String password;
+
+    @NotNull
     private String password_confirm;
+
     private String userID;
 
     private String[] roles;

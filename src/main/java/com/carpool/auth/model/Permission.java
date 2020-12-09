@@ -1,6 +1,7 @@
 package com.carpool.auth.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "permission")
@@ -11,6 +12,7 @@ public class Permission {
     private Integer id;
 
     @Column(name = "name")
+    @NotNull
     private String permissionName;
 
     public Permission() {

@@ -4,6 +4,7 @@ import com.carpool.auth.model.Permission;
 import com.carpool.auth.service.RoleCommandService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 public class RoleCreateDTO {
@@ -13,8 +14,10 @@ public class RoleCreateDTO {
 
     private Integer id;
 
+    @NotNull
     private String roleName;
 
+    @NotNull
     private String[] permissions;
 
     List<Permission> permissionList;
