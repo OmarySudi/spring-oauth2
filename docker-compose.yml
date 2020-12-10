@@ -32,7 +32,7 @@ services:
     image: mysql:8
     container_name: mysql-auth-server
     networks:
-      - auth-network
+      - host
     environment:
       - MYSQL_ROOT_PASSWORD=sudi
       - MYSQL_DATABASE=OAuthDB
@@ -45,8 +45,8 @@ services:
     ports:
       - "9090:9090"
     networks:
-      - auth-network
+      - host
     depends_on:
       - mysql-auth-server
 networks:
-  auth-network:
+  host:

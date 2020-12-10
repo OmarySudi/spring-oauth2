@@ -67,7 +67,7 @@ public class UserCommandImplementation implements UserCommandService{
                     //mail.setText("This email is for verification of email");
 
                     Map<String,Object> model = new HashMap<String,Object>();
-                    model.put("link","http://localhost:9090/api/v1/users/registration_redirect?userID="+newUser.getUserID());
+                    model.put("link","http://188.166.59.90:9090/api/v1/users/registration_redirect?userID="+newUser.getUserID());
                     mail.setProps(model);
 
                     emailService.sendComplexEmail(mail);
