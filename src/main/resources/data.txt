@@ -4,6 +4,6 @@ INSERT INTO oauth_client_details
  scope, access_token_validity, refresh_token_validity,
  resource_ids, authorized_grant_types, additional_information)
  VALUES ('carpool', '{bcrypt}$2y$12$TeFEj1pVZPjsdxcgDeHifu6sxTwmTxKM/1sEMb6qJcwZgpaaayPhm',
- null, 'ROLE_admin,ROLE_operator', '3600', '10000', 'driver,customer,oauth',
+ null, 'ROLE_admin,ROLE_it,ROLE_operator',ROLE_manager,ROLE_sales,ROLE_driver,ROLE_customer'3600', '10000', 'driver,customer,oauth',
  'authorization_code,password,refresh_token,implicit', '{}');
 

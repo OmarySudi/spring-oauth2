@@ -29,7 +29,8 @@
 version: "3"
 services:
   mysql-auth-server:
-    image: mysql:5.7
+    image: mysql:8
+    container_name: mysql-auth-server
     networks:
       - auth-network
     environment:
@@ -40,8 +41,9 @@ services:
 
   spring-auth-server:
     image: auth-server
+    container_name: spring-auth-server
     ports:
-      - "9091:9091"
+      - "9090:9090"
     networks:
       - auth-network
     depends_on:

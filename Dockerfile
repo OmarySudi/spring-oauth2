@@ -11,7 +11,6 @@
 #EXPOSE 9091
 #ENTRYPOINT ["java","-jar","/app.jar"]
 
-
 From openjdk:8
 copy ./target/auth-0.0.1-SNAPSHOT.jar auth-0.0.1-SNAPSHOT.jar
 ENTRYPOINT ["java","-jar","auth-0.0.1-SNAPSHOT.jar"]
