@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.mail.SendFailedException;
 import java.util.*;
 
 @Service
@@ -70,9 +71,13 @@ public class UserCommandImplementation implements UserCommandService{
                     model.put("link","http://188.166.59.90:9090/api/v1/users/registration_redirect?userID="+newUser.getUserID());
                     mail.setProps(model);
 
-                    emailService.sendComplexEmail(mail);
-                    //emailService.sendSimpleEmail(mail);
+                    try{
+                        emailService.sendComplexEmail(mail);
+                         }catch(SendFailedException ex){
 
+                         throw new InternalServerErrorException(ex.getMessage());
+                    }
+                    //emailService.sendSimpleEmail(mail);
                     return userDetailsRepository.save(newUser);
 
                 } catch(Exception ex){
