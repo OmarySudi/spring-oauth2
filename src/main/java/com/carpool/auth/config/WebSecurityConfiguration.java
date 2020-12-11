@@ -49,11 +49,20 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/api/v1/users/register")
-                .antMatchers("/api/v1/users/registration_redirect")
-                .antMatchers("/v2/api-docs")
-                .antMatchers("/swagger-ui/*")
-                .antMatchers("/webjars/*");
+//        web.ignoring().antMatchers("/api/v1/users/register")
+//                .antMatchers("/api/v1/users/registration_redirect")
+//                .antMatchers("/v2/api-docs")
+//                .antMatchers("/swagger-ui/*")
+//                .antMatchers("/webjars/*");
+        web.ignoring().antMatchers(
+                "/api/v1/users/register",
+                "/v2/api-docs",
+                "/swagger-resources/**",
+                "/swagger-ui.html**",
+                "/swagger-ui/**",
+                "/webjars/**",
+                "favicon.ico"
+        );
     }
 
     @Override
