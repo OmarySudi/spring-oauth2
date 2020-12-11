@@ -28,25 +28,22 @@
 #  auth_auth-network
 version: "3"
 services:
-  mysql-auth-server:
-    image: mysql:8
-    container_name: mysql-auth-server
-    networks:
-      - host
-    environment:
-      - MYSQL_ROOT_PASSWORD=sudi
-      - MYSQL_DATABASE=OAuthDB
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=sudi
+#  mysql-auth-server:
+#    image: mysql:8
+#    container_name: mysql-auth-server
+#    networks:
+#      - host
+#    environment:
+#      - MYSQL_ROOT_PASSWORD=sudi
+#      - MYSQL_DATABASE=OAuthDB
+#      - MYSQL_USER=root
+#      - MYSQL_PASSWORD=sudi
 
   spring-auth-server:
     image: auth-server
     container_name: spring-auth-server
     ports:
       - "9090:9090"
+      - "587:587"
     networks:
-      - host
-    depends_on:
-      - mysql-auth-server
-networks:
-  host:
+      - aksonauth_auth-network
