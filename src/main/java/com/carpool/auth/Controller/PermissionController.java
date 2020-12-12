@@ -4,6 +4,7 @@ import com.carpool.auth.model.Permission;
 import com.carpool.auth.model.Role;
 import com.carpool.auth.repository.UserPermissionRepository;
 import com.carpool.auth.service.PermissionCommandService;
+import io.swagger.annotations.Api;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@Api(tags = {"permissionController"})
 @RequestMapping("api/v1/permissions")
 public class PermissionController {
 

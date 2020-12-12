@@ -6,6 +6,8 @@ import com.carpool.auth.model.User;
 import com.carpool.auth.repository.UserDetailsRepository;
 import com.carpool.auth.service.AmazonClient;
 import com.carpool.auth.service.UserCommandService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/api/v1/users")
+@Api(tags = {"userController"})
 public class UserController {
 
     @Autowired
@@ -38,7 +41,8 @@ public class UserController {
     private AmazonClient amazonClient;
 
     //@PreAuthorize("permitAll()")
-    @PostMapping(value = "/register")
+    @ApiOperation(value = "Registering a user in the application")
+    @PostMapping(value = "/register", produces = "application/json")
     public ResponseEntity<User> createUser(@RequestBody UserCreateDTO userCreateDTO){
 
         return new ResponseEntity<>(userCommandService.createUser(userCreateDTO),HttpStatus.CREATED);

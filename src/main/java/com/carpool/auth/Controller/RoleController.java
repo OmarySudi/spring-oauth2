@@ -4,6 +4,7 @@ import com.carpool.auth.dto.RoleCreateDTO;
 import com.carpool.auth.model.Role;
 import com.carpool.auth.repository.UserRoleRepository;
 import com.carpool.auth.service.RoleCommandService;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@Api(tags = {"roleController"})
 @RequestMapping("api/v1/roles")
 public class RoleController {
 

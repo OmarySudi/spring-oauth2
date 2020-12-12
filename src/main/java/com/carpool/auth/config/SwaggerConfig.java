@@ -7,6 +7,7 @@ import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Contact;
+import springfox.documentation.service.Tag;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 
@@ -28,8 +29,11 @@ public class SwaggerConfig {
     public Docket postsApi() {
         return new Docket(DocumentationType.SWAGGER_2).groupName("public-api")
                 .apiInfo(apiInfo())
+                .tags(new Tag("userController","Account control operations which can be done by users of the system"))
+                .tags(new Tag("roleController","Operations pertaining to roles of users of the system"))
+                .tags(new Tag("permissionController","Operations pertaining to permissions allowed in the applications"))
                 .select()
-                .apis(RequestHandlerSelectors.any())
+                .apis(RequestHandlerSelectors.basePackage("com.carpool.auth.Controller"))
                 .paths(PathSelectors.any())
                 .build();
     }
