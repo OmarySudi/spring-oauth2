@@ -2,6 +2,7 @@ package com.carpool.auth.dto;
 
 import com.carpool.auth.model.Permission;
 import com.carpool.auth.service.RoleCommandService;
+import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.constraints.NotNull;
@@ -14,9 +15,12 @@ public class RoleCreateDTO {
 
     private Integer id;
 
+
+    @ApiModelProperty(notes = "name of the role")
     @NotNull
     private String roleName;
 
+    @ApiModelProperty(notes = "permissions of the role")
     @NotNull
     private String[] permissions;
 

@@ -1,5 +1,8 @@
 package com.carpool.auth.model;
 
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiOperation;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -11,6 +14,7 @@ public class Permission {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
+    @ApiModelProperty(notes = "name of a permission")
     @Column(name = "name")
     @NotNull
     private String permissionName;

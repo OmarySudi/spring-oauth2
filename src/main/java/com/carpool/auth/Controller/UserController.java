@@ -48,11 +48,13 @@ public class UserController {
         return new ResponseEntity<>(userCommandService.createUser(userCreateDTO),HttpStatus.CREATED);
     }
 
+    @ApiOperation(value="Fetching all users registered in the application")
     @GetMapping
     public ResponseEntity<List<User>> fetchAll(){
         return new ResponseEntity<>(userCommandService.getAllUsers(),HttpStatus.OK);
     }
 
+    @ApiOperation(value="Redirecting the user to login page when clicking the email confirmation link")
     @GetMapping(value = "/registration_redirect")
     public ModelAndView confirm_registration(@RequestParam(name="userID") String userID,Model model){
 
@@ -93,11 +95,13 @@ public class UserController {
 
     }
 
+    @ApiOperation(value = "Setting roles to the certain user")
     @PostMapping(value="/set-user-roles")
     public ResponseEntity<User> setUserRoles(@RequestBody UserCreateDTO userCreateDTO){
         return new ResponseEntity<>(userCommandService.setRoles(userCreateDTO),HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Uploading a profile picture of a certain uers")
     @PostMapping(value="/upload-picture")
     public ResponseEntity<User> uploadPicture(
             @RequestPart(value="profile_picture")MultipartFile profile_picture,
@@ -107,6 +111,7 @@ public class UserController {
 
     }
 
+    @ApiOperation(value = "Deleting a user")
     @DeleteMapping(value="/delete/{userID}")
     public ResponseEntity<String> deleteUser(@PathVariable(value="userID") String userID){
 
@@ -114,6 +119,7 @@ public class UserController {
 
     }
 
+    @ApiOperation(value = "Uploading files required by a customer with driver role")
     @PostMapping(value = "/upload-files")
     public ResponseEntity<User> driverUploadFiles(
             @RequestPart(value="profile_picture")MultipartFile profile_picture,
