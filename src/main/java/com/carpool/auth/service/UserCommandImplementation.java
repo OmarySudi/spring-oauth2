@@ -145,6 +145,16 @@ public class UserCommandImplementation implements UserCommandService{
     }
 
     @Override
+    public User getUserByEmail(String email) {
+
+        Optional<User> optionalUser = userDetailsRepository.findByUsername(email);
+
+        optionalUser.orElseThrow(()->new EntityNotFoundException("The is no user with email "+email+" found in the database"));
+
+        return optionalUser.get();
+    }
+
+    @Override
     public String deleteUser(String userID) {
         Optional<User> optionalUser = userDetailsRepository.findByUserID(userID);
 

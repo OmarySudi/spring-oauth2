@@ -18,5 +18,7 @@ public interface UserCommandService {
 
     User getUser(String userID);
 
+    User getUserByEmail(String email);
+
     String deleteUser(String userID);
 }

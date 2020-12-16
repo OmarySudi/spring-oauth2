@@ -2,6 +2,7 @@ package com.carpool.auth.Controller;
 
 import com.carpool.auth.dto.UserCreateDTO;
 import com.carpool.auth.exeption.InternalServerErrorException;
+import com.carpool.auth.model.Role;
 import com.carpool.auth.model.User;
 import com.carpool.auth.repository.UserDetailsRepository;
 import com.carpool.auth.service.AmazonClient;
@@ -142,4 +143,19 @@ public class UserController {
 
         return new ResponseEntity<>(amazonClient.uploadFiles(files,userID,carID),HttpStatus.OK);
     }
+
+    @ApiOperation(value = "fetch a user by his/her email")
+    @GetMapping(value="/fetch-by-email/{email}")
+    public ResponseEntity<User> getUserByEmail(@PathVariable(value="email") String email){
+
+        return new ResponseEntity<>(userCommandService.getUserByEmail(email),HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "fetch a user by his/her userID")
+    @GetMapping(value="/fetch-by-id/{userID}")
+    public ResponseEntity<User> getUserByUserID(@PathVariable(value="userID") String userID){
+
+        return new ResponseEntity<>(userCommandService.getUser(userID),HttpStatus.OK);
+    }
+
 }
