@@ -30,55 +30,18 @@ create table if not exists role (
   unique key name (name)
 ) engine=innodb ;
 
---create table if not exists  user (
---  id int(11) not null auto_increment,
---  username varchar(100) not null,
---  password varchar(1024) not null,
---  userID varchar(100) not null,
---  full_name varchar(100) not null,
---  phone_number varchar(100) not null,
---  profile_picture varchar(1024) null,
---  identinty_card varchar (1024) null,
---  driving_licence varchar (1024) null,
---  certificate_of_good_conduct varchar (1024) null,
---  carID varchar(100) null,
---  car_approval tinyint(4) default 0,
---  driver_status varchar(20) default 'inactive',
---  email varchar(1024) not null,
---  enabled tinyint(4) default 1,
---  email_confirmation tinyint(4) default 0,
---  admin_document_verification tinyint(4) default 0,
---  account_activation tinyint(4) default 0,
---  accountNonExpired tinyint(4) default 1,
---  credentialsNonExpired tinyint(4) default 1,
---  accountNonLocked tinyint(4) default 1,
---  primary key (id),
---  unique key username (username)
---) engine=innodb ;
-
 create table if not exists  user (
   id int(11) not null auto_increment,
-  username varchar(200) not null,
+  email varchar(200) not null,
   password varchar(1024) not null,
   userID varchar(100) not null,
-  full_name varchar(100) not null,
-  phone_number varchar(100) not null,
-  profile_picture varchar(1024) null,
-  identinty_card varchar (1024) null,
-  driving_licence varchar (1024) null,
-  certificate_of_good_conduct varchar (1024) null,
-  carID varchar(100) null,
-  car_approval tinyint(4) default 0,
-  driver_status varchar(20) default 'inactive',
   enabled tinyint(4) default 0,
-  email_confirmation tinyint(4) default 0,
-  admin_document_verification tinyint(4) default 0,
   account_activation tinyint(4) default 0,
   accountNonExpired tinyint(4) default 0,
   credentialsNonExpired tinyint(4) default 0,
   accountNonLocked tinyint(4) default 0,
   primary key (id),
-  constraint uc_username_userid unique (username,userID)
+  constraint uc_email_userid unique (email,userID)
 ) engine=innodb ;
 
 create table  if not exists permission_role (

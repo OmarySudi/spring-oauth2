@@ -1,6 +1,7 @@
 HELP.md
 Dockerfile
 docker-compose.yml
+/target
 src/main/resources/application.yml
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
