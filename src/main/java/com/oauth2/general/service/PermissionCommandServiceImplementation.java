@@ -1,12 +1,17 @@
 package com.oauth2.general.service;
 
+import com.oauth2.general.dto.RoleCreateDTO;
 import com.oauth2.general.exeption.EntityNotFoundException;
 import com.oauth2.general.exeption.InternalServerErrorException;
 import com.oauth2.general.model.Permission;
+import com.oauth2.general.model.Role;
 import com.oauth2.general.repository.UserPermissionRepository;
+import com.oauth2.general.response.CustomResponse;
+import com.oauth2.general.response.CustomResponseCodes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,76 +22,147 @@ public class PermissionCommandServiceImplementation implements PermissionCommand
     UserPermissionRepository userPermissionRepository;
 
     @Override
-    public Permission createPermission(Permission permission) {
-
+    public CustomResponse<Permission> createPermission(Permission permission) {
+        CustomResponse<Permission> response = new CustomResponse<>();
+        List<Permission> permissions = new ArrayList<>();
 
         try{
+
             Permission newPermission = new Permission();
 
             newPermission.setPermissionName(permission.getPermissionName());
 
-            return userPermissionRepository.save(newPermission);
+            userPermissionRepository.save(newPermission);
 
-        }catch(Exception ex){
-
-            throw new InternalServerErrorException("Permission creation failed due to internal server error");
+            permissions.add(newPermission);
+            response.setObjects(permissions);
+            response.setGeneralErrorCode(CustomResponseCodes.OPERATION_SUCCESSFULLY);
+            response.setMessage("Permission has been created successfully");
         }
+        catch(Exception ex){
+
+            response.setGeneralErrorCode(CustomResponseCodes.FAILED_TO_CREATE_RECORD);
+            response.addErrorToList("Operation failed");
+            response.setMessage("Permission failed to be created");
+            response.setDetails("There is an internal error which caused permission creation to fail");
+        }
+
+        return response;
     }
 
     @Override
-    public Permission updatePermission(Integer id,Permission permission) {
+    public CustomResponse<Permission> updatePermission(Integer id,Permission permission) {
 
-        Optional<Permission> Permission = userPermissionRepository.findById(id);
+        CustomResponse<Permission> response = new CustomResponse<>();
+        List<Permission> permissions = new ArrayList<>();
+        Optional<Permission> optionalPermission = userPermissionRepository.findById(id);
 
-        if(Permission.isPresent()){
+        if(optionalPermission.isPresent()) {
 
-            Permission currentPermission = Permission.get();
+            Permission currentPermission = optionalPermission.get();
+            Permission updatedPermission;
 
             currentPermission.setPermissionName(permission.getPermissionName());
+            updatedPermission = userPermissionRepository.save(currentPermission);
 
-            Permission updatedPermission = userPermissionRepository.save(currentPermission);
+            permissions.add(updatedPermission);
+            response.setObjects(permissions);
+            response.setGeneralErrorCode(CustomResponseCodes.OPERATION_SUCCESSFULLY);
+            response.setMessage("Permission has been updated successfully");
 
-            return new Permission(updatedPermission.getId(),updatedPermission.getPermissionName());
-
-        } else {
-            throw new EntityNotFoundException("Permission with id "+id.toString()+"is not found in the database");
         }
+        else{
+
+            response.setGeneralErrorCode(CustomResponseCodes.RECORD_NOT_FOUND);
+            response.addErrorToList("No permission found");
+            response.setMessage("There is no permission found with the supplied id");
+            response.setDetails("No permission with the specified id found in the database, make sure you have supplied correct id");
+        }
+
+        return response;
     }
 
     @Override
-    public String deletePermission(Integer id) {
-        Optional<Permission> permission = userPermissionRepository.findById(id);
+    public CustomResponse<Permission> deletePermission(Integer id) {
 
-        if(permission.isPresent()){
+        CustomResponse<Permission> response = new CustomResponse<>();
+        List<Permission> permissions = new ArrayList<>();
+        Optional<Permission> optionalPermission = userPermissionRepository.findById(id);
+
+        if(optionalPermission.isPresent()){
+
             try{
-                userPermissionRepository.delete(permission.get());
-                return "Permission has been successfully deleted";
+
+                userPermissionRepository.delete(optionalPermission.get());
+                permissions.add(optionalPermission.get());
+                response.setObjects(permissions);
+                response.setGeneralErrorCode(CustomResponseCodes.OPERATION_SUCCESSFULLY);
+                response.setMessage("Permission has been successfully deleted");
 
             }catch(Exception ex){
 
-                throw new InternalServerErrorException("Permission deletion failed due to internal server error");
+                response.setGeneralErrorCode(CustomResponseCodes.DELETE_OPERATION_FAILED);
+                response.addErrorToList("Operation failed");
+                response.setMessage("Failed to delete a permission from database");
+                response.setDetails("There is an internal error which caused permission deletion to fail");
             }
-        }else
-            throw new EntityNotFoundException("You can't delete this permission,permission with id "+id.toString()+" is not found in the database");
+
+        }else{
+
+            response.setGeneralErrorCode(CustomResponseCodes.USER_NOT_FOUND);
+            response.addErrorToList("No permission");
+            response.setMessage("There is no permission found with the supplied ID");
+            response.setDetails("No permission with the specified ID found in the database, make sure you have supplied correct ID");
+        }
+
+        return response;
     }
 
     @Override
-    public Permission getPermission(Integer id) {
-        Optional<Permission> permission = userPermissionRepository.findById(id);
+    public CustomResponse<Permission> getPermission(Integer id) {
 
-        if(permission.isPresent())
-            return permission.get();
-        else
-            throw new EntityNotFoundException("Permission with id "+id.toString()+" is not found in the database");
+        CustomResponse<Permission> response = new CustomResponse<>();
+        List<Permission> permissions = new ArrayList<>();
+        Optional<Permission> optionalPermission = userPermissionRepository.findById(id);
+
+        if(optionalPermission.isPresent()){
+
+            permissions.add(optionalPermission.get());
+            response.setObjects(permissions);
+            response.setGeneralErrorCode(CustomResponseCodes.OPERATION_SUCCESSFULLY);
+            response.setMessage("Operation successfully");
+
+        }else {
+
+            response.setGeneralErrorCode(CustomResponseCodes.RECORD_NOT_FOUND);
+            response.addErrorToList("No permission found");
+            response.setMessage("There is no permission found with the supplied id");
+            response.setDetails("No permission with the specified id found in the database, make sure you have supplied correct id");
+        }
+
+        return response;
     }
 
     @Override
-    public List<Permission> getPermissions() {
-        List<Permission> permissionList = userPermissionRepository.findAll();
+    public CustomResponse<Permission> getPermissions() {
 
-        if(permissionList.size() > 0){
-            return permissionList;
-        }else
-            throw new EntityNotFoundException("There are no permissions in the database");
+        List<Permission> permissions = userPermissionRepository.findAll();
+        CustomResponse<Permission> response = new CustomResponse<>();
+
+        if(permissions.size() > 0){
+
+            response.setObjects(permissions);
+            response.setGeneralErrorCode(CustomResponseCodes.OPERATION_SUCCESSFULLY);
+            response.setMessage("Operation successfully");
+
+        } else{
+
+            response.setGeneralErrorCode(CustomResponseCodes.USER_NOT_FOUND);
+            response.addErrorToList("No permissions");
+            response.setMessage("There are no permissions found in the database");
+            response.setDetails("There are no permissions found in the database");
+        }
+
+        return response;
     }
 }

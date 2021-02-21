@@ -9,6 +9,8 @@ import com.oauth2.general.model.User;
 import com.oauth2.general.repository.UserDetailsRepository;
 import com.oauth2.general.repository.UserPermissionRepository;
 import com.oauth2.general.repository.UserRoleRepository;
+import com.oauth2.general.response.CustomResponse;
+import com.oauth2.general.response.CustomResponseCodes;
 import com.oauth2.general.utilities.Utilities;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,7 +41,11 @@ public class UserCommandImplementation implements UserCommandService{
     UserPermissionRepository userPermissionRepository;
 
     @Override
-    public User createUser(UserCreateDTO userCreateDTO){
+    public CustomResponse<User> createUser(UserCreateDTO userCreateDTO){
+        CustomResponse<User> response = new CustomResponse<>();
+        List<User> users = new ArrayList<>();
+        User newUser = new User();
+
         Optional<User> optionalUser = userDetailsRepository.findByEmail(userCreateDTO.getEmail());
 
         if(!optionalUser.isPresent())
@@ -47,9 +53,6 @@ public class UserCommandImplementation implements UserCommandService{
             if(userCreateDTO.getPassword().equals(userCreateDTO.getPassword_confirm()))
             {
                 try{
-
-                    User newUser = new User();
-
                     newUser.setEmail(userCreateDTO.getEmail());
                     newUser.setPassword(passwordEncoder.encode(userCreateDTO.getPassword()));
 
@@ -58,7 +61,7 @@ public class UserCommandImplementation implements UserCommandService{
 
                     newUser.setUserID(Utilities.generateRandomString());
 
-                      //SENDING EMAIL:
+                    //SENDING EMAIL:
 //                    Mail mail = new Mail();
 //                    mail.setMailTo(userCreateDTO.getUsername());
 //                    mail.setSubject("Account Confirmation");
@@ -74,18 +77,37 @@ public class UserCommandImplementation implements UserCommandService{
 //                         throw new InternalServerErrorException(ex.getMessage());
 //                    }
 
-                    return userDetailsRepository.save(newUser);
+                    userDetailsRepository.save(newUser);
+
+                    users.add(newUser);
+                    response.setObjects(users);
+                    response.setGeneralErrorCode(CustomResponseCodes.OPERATION_SUCCESSFULLY);
+                    response.setMessage("User has been created successfully");
 
                 } catch(Exception ex){
 
-                    throw new InternalServerErrorException("Can not register user, there is internal server error");
+                    response.setGeneralErrorCode(CustomResponseCodes.FAILED_TO_CREATE_RECORD);
+                    response.addErrorToList("Operation failed");
+                    response.setMessage("User failed to be created");
+                    response.setDetails("There is an internal error which caused user creation to fail");
                 }
             }
-            else
-                throw new InternalServerErrorException("Passwords does not match");
+            else{
 
-        }else
-            throw new InternalServerErrorException("Email is already used, use other email");
+                response.setGeneralErrorCode(CustomResponseCodes.VALIDATION_ERROR);
+                response.addErrorToList("Passwords does not match");
+                response.setMessage("Passwords does not match");
+                response.setDetails("Passwords and confirm password should match");
+            }
+
+        }else{
+            response.setGeneralErrorCode(CustomResponseCodes.EMAIL_FOUND);
+            response.addErrorToList("Email already used");
+            response.setMessage("Email is already used, use other email");
+            response.setDetails("There is an account with the same email found in the databases,email should be unique");
+        }
+
+        return response;
     }
 
     @Override
@@ -106,67 +128,133 @@ public class UserCommandImplementation implements UserCommandService{
     }
 
     @Override
-    public User setRoles(UserCreateDTO userCreateDTO) {
+    public CustomResponse<User> setRoles(UserCreateDTO userCreateDTO) {
         User foundUser;
+        CustomResponse<User> response = new CustomResponse<>();
+        List<User> users = new ArrayList<>();
         Optional<User> optionalUser = userDetailsRepository.findByUserID(userCreateDTO.getUserID());
 
         if(optionalUser.isPresent()){
             optionalUser.get().setRoles(userCommandService.setRolesList(userCreateDTO.getRoles()));
             foundUser = userDetailsRepository.save(optionalUser.get());
+
+            users.add(foundUser);
+            response.setObjects(users);
+            response.setGeneralErrorCode(CustomResponseCodes.OPERATION_SUCCESSFULLY);
+            response.setMessage("Operation successfully");
+
         } else {
-            throw new EntityNotFoundException("The user with userID "+userCreateDTO.getUserID()+"is no found in the database");
+
+            response.setGeneralErrorCode(CustomResponseCodes.USER_NOT_FOUND);
+            response.addErrorToList("No user");
+            response.setMessage("There is no user found with the supplied ID");
+            response.setDetails("No user with the specified ID found in the database, make sure you have supplied correct ID");
         }
 
-        return foundUser;
+        return response;
     }
 
     @Override
-    public List<User> getAllUsers() {
-
+    public CustomResponse<User> getAllUsers() {
         List<User> users = userDetailsRepository.findAll();
+        CustomResponse<User> response = new CustomResponse<>();
 
         if(users.size() > 0){
-            return users;
-        } else
-             throw new EntityNotFoundException("There are no users in the database");
+
+            response.setObjects(users);
+            response.setGeneralErrorCode(CustomResponseCodes.OPERATION_SUCCESSFULLY);
+            response.setMessage("Operation successfully");
+
+        } else{
+
+            response.setGeneralErrorCode(CustomResponseCodes.USER_NOT_FOUND);
+            response.addErrorToList("No users");
+            response.setMessage("There are no users found in the database");
+            response.setDetails("There are no users found in the database");
+        }
+
+        return response;
     }
 
     @Override
-    public User getUser(String userID) {
-
-        Optional<User> optionalUser = userDetailsRepository.findByUserID(userID);
-
-        optionalUser.orElseThrow(()->new EntityNotFoundException("The is no user with id "+userID+" found in the database"));
-
-        return optionalUser.get();
-    }
-
-    @Override
-    public User getUserByEmail(String email) {
-
-        Optional<User> optionalUser = userDetailsRepository.findByEmail(email);
-
-        optionalUser.orElseThrow(()->new EntityNotFoundException("The is no user with email "+email+" found in the database"));
-
-        return optionalUser.get();
-    }
-
-    @Override
-    public String deleteUser(String userID) {
+    public  CustomResponse<User> getUser(String userID) {
+        CustomResponse<User> response = new CustomResponse<>();
+        List<User> users = new ArrayList<>();
         Optional<User> optionalUser = userDetailsRepository.findByUserID(userID);
 
         if(optionalUser.isPresent()){
-            User user = optionalUser.get();
+
+            users.add(optionalUser.get());
+            response.setObjects(users);
+            response.setGeneralErrorCode(CustomResponseCodes.OPERATION_SUCCESSFULLY);
+            response.setMessage("Operation successfully");
+        }else {
+            response.setGeneralErrorCode(CustomResponseCodes.USER_NOT_FOUND);
+            response.addErrorToList("No user");
+            response.setMessage("There is no user found with the supplied userID");
+            response.setDetails("No user with the specified userID found in the database, make sure you have supplied correct userID");
+        }
+
+        return response;
+    }
+
+    @Override
+    public CustomResponse<User> getUserByEmail(String email) {
+        CustomResponse<User> response = new CustomResponse<>();
+        List<User> users = new ArrayList<>();
+        Optional<User> optionalUser = userDetailsRepository.findByEmail(email);
+
+        if(optionalUser.isPresent()){
+            users.add(optionalUser.get());
+            response.setObjects(users);
+            response.setGeneralErrorCode(CustomResponseCodes.OPERATION_SUCCESSFULLY);
+            response.setMessage("Operation successfully");
+        }else {
+            response.setGeneralErrorCode(CustomResponseCodes.USER_NOT_FOUND);
+            response.addErrorToList("No user");
+            response.setMessage("There is no user found with the supplied email");
+            response.setDetails("No user with the specified email found in the database, make sure you have supplied correct email");
+        }
+
+        return response;
+    }
+
+    @Override
+    public CustomResponse<User> deleteUser(String userID) {
+        CustomResponse<User> response = new CustomResponse<>();
+        List<User> users = new ArrayList<>();
+        Optional<User> optionalUser = userDetailsRepository.findByUserID(userID);
+        User user;
+
+        if(optionalUser.isPresent()){
+            user = optionalUser.get();
+
             try{
                 userDetailsRepository.delete(user);
 
-                return "User has successfully been deleted";
+                users.add(user);
+                response.setObjects(users);
+                response.setGeneralErrorCode(CustomResponseCodes.OPERATION_SUCCESSFULLY);
+                response.setMessage("User has been successfully deleted");
 
             }catch(Exception ex){
-                throw new InternalServerErrorException("There is a server problem when deleting user, try again later");
+
+                response.setGeneralErrorCode(CustomResponseCodes.DELETE_OPERATION_FAILED);
+                response.addErrorToList("Operation failed");
+                response.setMessage("Failed to delete a user from database");
+                response.setDetails("There is an internal error which caused user deletion to fail");
             }
 
-        }else
-            throw new EntityNotFoundException("There is no user of "+userID+" found in the database");
+        }else{
+
+            response.setGeneralErrorCode(CustomResponseCodes.USER_NOT_FOUND);
+            response.addErrorToList("No user");
+            response.setMessage("There is no user found with the supplied ID");
+            response.setDetails("No user with the specified ID found in the database, make sure you have supplied correct ID");
+        }
+
+        return response;
     }
+
+
 }

@@ -3,22 +3,23 @@ package com.oauth2.general.service;
 import com.oauth2.general.dto.UserCreateDTO;
 import com.oauth2.general.model.Role;
 import com.oauth2.general.model.User;
+import com.oauth2.general.response.CustomResponse;
 
 import java.util.List;
 
 public interface UserCommandService {
 
-    public User createUser(UserCreateDTO userCreateDTO);
+    public CustomResponse<User> createUser(UserCreateDTO userCreateDTO);
 
     List<Role> setRolesList(String roles[]);
 
-    User setRoles(UserCreateDTO userCreateDTO);
+    CustomResponse<User> setRoles(UserCreateDTO userCreateDTO);
 
-    List<User> getAllUsers();
+    CustomResponse<User> getAllUsers();
 
-    User getUser(String userID);
+    CustomResponse<User> getUser(String userID);
 
-    User getUserByEmail(String email);
+    CustomResponse<User> getUserByEmail(String email);
 
-    String deleteUser(String userID);
+    CustomResponse<User> deleteUser(String userID);
 }
